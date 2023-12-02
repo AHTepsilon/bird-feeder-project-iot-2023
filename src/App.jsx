@@ -2,13 +2,10 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import {app, db, storage, auth} from "./functions/firebase.js"
+import { doc, setDoc } from "firebase/firestore"; 
 import './App.css'
 import { signInAnonymously } from 'firebase/auth'
 import { ref, getDownloadURL, getMetadata } from 'firebase/storage'
-
-function GetPicture(){
-  // Reference to Picture Storage Path
-}
 
 function App() {
   const storageRef = ref(storage);
@@ -35,6 +32,11 @@ getMetadata(imgRef)
     const time = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     const writtenDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     document.getElementById('date-time').innerHTML = `${time} at ${writtenDate}`;
+
+    setDoc(doc(db, "pictures", date), {
+      date: date,
+      time: time
+    });
   })
   .catch((error) => {
     console.error(error);
