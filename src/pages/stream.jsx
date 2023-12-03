@@ -1,11 +1,15 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react';
 
 const Stream = () => {
+
+  const [streamUrl, setStreamUrl] = useState(""); /*Poner IP entre las comillas*/
+
   return (
     <>
       <h1>Bird feeder</h1>
       <div className='container'>
-        <video controls src='' type="video/mp4"></video> {/*Poner IP en el source*/}
+        <img src={streamUrl}></img>
+        {streamUrl == "" && <p>Video no disponible</p>}
       </div>
     </>
   )

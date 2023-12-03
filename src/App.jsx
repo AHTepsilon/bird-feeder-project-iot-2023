@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import {app, db, storage, auth} from "./functions/firebase.js"
-import { doc, setDoc } from "firebase/firestore"; 
+import { doc, setDoc, serverTimestamp } from "firebase/firestore"; 
 import './App.css'
 import { signInAnonymously } from 'firebase/auth'
-import { ref, getDownloadURL, getMetadata } from 'firebase/storage'
+import { ref, getDownloadURL, getMetadata, uploadBytes } from 'firebase/storage'
 
 function uploadData(id, date, time, url){
   console.log(date, time, url);
@@ -33,17 +33,43 @@ function App() {
 
     setImgDate(writtenDate);
     setImgTime(time);
-    setImgId(metadata.timeCreated);
+    setImgId(metadata.generation);
   })
   .catch((error) => {
     console.error(error);
   });
-  
+
+  const newFilePath = `data/${imgId}.jpg`;
+  const newFileRef = ref(storage, newFilePath);
+
   signInAnonymously(auth)
   .then(() => {
     getDownloadURL(imgRef)
       .then((url) => {
         document.getElementById('img').src = url;
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'blob';
+        xhr.onload = (event) => {
+          const blob = xhr.response;
+          var file = new File([blob], "image name", { type: blob.type });
+          uploadBytes(newFileRef, file);
+        };
+        xhr.open('GET', url);
+        xhr.send();
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  })
+  .catch((error) => {
+    console.error(error);
+    window.location.reload()
+  });
+
+  signInAnonymously(auth)
+  .then(() => {
+    getDownloadURL(newFileRef)
+      .then((url) => {
         uploadData(imgId, imgDate, imgTime, url);
       })
       .catch((error) => {
@@ -52,6 +78,7 @@ function App() {
   })
   .catch((error) => {
     console.error(error);
+    window.location.reload()
   });
 
   return (
