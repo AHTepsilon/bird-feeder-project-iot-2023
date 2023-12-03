@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import {app, db, storage, auth} from "./functions/firebase.js"
@@ -7,25 +7,23 @@ import './App.css'
 import { signInAnonymously } from 'firebase/auth'
 import { ref, getDownloadURL, getMetadata } from 'firebase/storage'
 
+function uploadData(id, date, time, url){
+  console.log(date, time, url);
+        setDoc(doc(db, "pictures", id), {
+          date: date,
+          time: time,
+          url: url,
+        });
+}
+
 function App() {
   const storageRef = ref(storage);
   const imgRef = ref(storage, 'data/photo.jpg');
-  
-  signInAnonymously(auth)
-  .then(() => {
-    getDownloadURL(imgRef)
-      .then((url) => {
-        document.getElementById('img').src = url;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  })
-  .catch((error) => {
-    console.error(error);
-  });
+  const [imgDate, setImgDate] = useState("");
+  const [imgTime, setImgTime] = useState("");
+  const [imgId, setImgId] = useState("");
 
-getMetadata(imgRef)
+  getMetadata(imgRef)
   .then((metadata) => {
     console.log(metadata);
     const date = new Date(metadata.timeCreated);
@@ -33,10 +31,24 @@ getMetadata(imgRef)
     const writtenDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     document.getElementById('date-time').innerHTML = `${time} at ${writtenDate}`;
 
-    setDoc(doc(db, "pictures", date), {
-      date: date,
-      time: time
-    });
+    setImgDate(writtenDate);
+    setImgTime(time);
+    setImgId(metadata.timeCreated);
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+  
+  signInAnonymously(auth)
+  .then(() => {
+    getDownloadURL(imgRef)
+      .then((url) => {
+        document.getElementById('img').src = url;
+        uploadData(imgId, imgDate, imgTime, url);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   })
   .catch((error) => {
     console.error(error);

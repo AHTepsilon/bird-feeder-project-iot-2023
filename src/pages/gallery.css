@@ -1,0 +1,26 @@
+.container{
+    margin: 1em;
+}
+
+.title{
+    font-size: 32px;
+}
+
+.list{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 1em;
+}
+
+.list-item{
+
+}
+
+.list-item-img{
+    width: 25em;
+}
+
+.list-item-img-p{
+
+}
