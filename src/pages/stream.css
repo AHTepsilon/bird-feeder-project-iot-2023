@@ -1,0 +1,11 @@
+.image-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.feed{
+    margin: 2em;
+    width: 480px;
+}
