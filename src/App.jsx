@@ -63,23 +63,25 @@ function App() {
   })
   .catch((error) => {
     console.error(error);
-    window.location.reload()
+    window.location.reload();
   });
 
-  signInAnonymously(auth)
-  .then(() => {
-    getDownloadURL(newFileRef)
-      .then((url) => {
-        uploadData(imgId, imgDate, imgTime, url);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  })
-  .catch((error) => {
-    console.error(error);
-    window.location.reload()
-  });
+  setTimeout(() => {
+    signInAnonymously(auth)
+    .then(() => {
+      getDownloadURL(newFileRef)
+        .then((url) => {
+          uploadData(imgId, imgDate, imgTime, url);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    })
+    .catch((error) => {
+      console.error(error);
+      window.location.reload();
+    });
+  }, 2000);
 
   return (
     <>
